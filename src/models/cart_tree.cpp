@@ -1037,6 +1037,18 @@ void DecisionTree::build_tree_node(Client & client, int node_index) {
         // compute between split_iv and sample_iv and update
         std::vector<int> split_left_iv = features[j_star].split_ivs_left[s_star];
         std::vector<int> split_right_iv = features[j_star].split_ivs_right[s_star];
+
+        logger(logger_out, "Plain-Left:");
+        for (int i = 0; i < tree_nodes[node_index].sample_size; i++){
+            logger_without_time(logger_out, "%d", split_left_iv[i]);
+        }
+        logger_without_time(logger_out, "\n");
+        logger(logger_out, "Plain-Right:");
+        for (int i = 0; i < tree_nodes[node_index].sample_size; i++){
+            logger_without_time(logger_out, "%d", split_right_iv[i]);
+        }
+        logger_without_time(logger_out, "\n");
+
         tree_nodes[left_child_index].sample_iv = new EncodedNumber[tree_nodes[left_child_index].sample_size];
         tree_nodes[right_child_index].sample_iv = new EncodedNumber[tree_nodes[right_child_index].sample_size];
 //        omp_set_num_threads(NUM_OMP_THREADS);
@@ -1176,6 +1188,27 @@ void DecisionTree::build_tree_node(Client & client, int node_index) {
         tree_nodes[right_child_index].available_global_feature_num = tree_nodes[node_index].available_global_feature_num - 1;
         tree_nodes[left_child_index].sample_iv = new EncodedNumber[tree_nodes[left_child_index].sample_size];
         tree_nodes[right_child_index].sample_iv = new EncodedNumber[tree_nodes[right_child_index].sample_size];
+
+        logger(logger_out, "Recovered-Left:");
+        for (int i = 0; i < tree_nodes[node_index].sample_size; i++) {
+            // logger_without_time(logger_out, "%d ", mpz_get_ui(recv_left_sample_iv[i].value));
+            if (mpz_get_ui(recv_left_sample_iv[i].value) == 1){
+                logger_without_time(logger_out, "0");
+            } else {
+                logger_without_time(logger_out, "1");
+            }
+        }
+        logger_without_time(logger_out, "\n");
+        logger(logger_out, "Recovered-right:");
+        for (int i = 0; i < tree_nodes[node_index].sample_size; i++) {
+            if (mpz_get_ui(recv_right_sample_iv[i].value) == 1){
+                logger_without_time(logger_out, "0");
+            } else {
+                logger_without_time(logger_out, "1");
+            }
+        }
+        logger_without_time(logger_out, "\n");
+
         for (int i = 0; i < tree_nodes[node_index].sample_size; i++) {
             tree_nodes[left_child_index].sample_iv[i] = recv_left_sample_iv[i];
             tree_nodes[right_child_index].sample_iv[i] = recv_right_sample_iv[i];

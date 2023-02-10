@@ -30,6 +30,15 @@ std::string get_timestamp_str();
 void logger(FILE* out, const char *format, ...);
 
 /**
+ * log file
+ *
+ * @param out
+ * @param format
+ * @param ...
+ */
+void logger_without_time(FILE* out, const char *format, ...);
+
+/**
  * stdout print for debug
  *
  * @param str
